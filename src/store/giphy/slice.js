@@ -25,8 +25,10 @@ const giphySlice = createSlice({
   initialState,
   reducers: {
     removeSearchedResult(state) {
-      console.log("Called")
       state.searchedGif = [];
+    },
+    removeError(state) {
+      state.error = '';
     },
   },
   extraReducers: builder => {
@@ -59,6 +61,9 @@ const giphySlice = createSlice({
       state.searchedGifLoading = true;
     }),
       builder.addCase(getSearchedTrendingGif.fulfilled, (state, {payload}) => {
+        if (payload.length == 0) {
+          state.error = 'No gifs for following keyword';
+        }
         state.searchedGif = payload;
         state.searchedGifLoading = false;
       }),
@@ -88,6 +93,6 @@ const giphySlice = createSlice({
   },
 });
 
-export const {removeSearchedResult} = giphySlice.actions;
+export const {removeSearchedResult,removeError} = giphySlice.actions;
 
 export default giphySlice.reducer;

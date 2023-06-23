@@ -13,3 +13,7 @@ export const searchedGifLoadingSelector = state =>
 
 export const searchedExtraGifLoadingSelector = state =>
   state.giphy.searchedExtraGifLoading;
+
+  export const errorSelector = state =>
+  state.giphy.error;
+

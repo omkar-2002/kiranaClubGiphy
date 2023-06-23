@@ -6,8 +6,9 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Feather from 'react-native-vector-icons/Feather';
 import Colors from '../../constants/Colors';
@@ -19,11 +20,12 @@ import {
   searchedGifSelector,
   searchedGifLoadingSelector,
   searchedExtraGifLoadingSelector,
+  errorSelector,
 } from '../../store/giphy/selector';
 import {TouchableOpacity} from 'react-native';
 import GiphyCard from '../../components/giphyCard';
 import styles from './styles';
-import {removeSearchedResult} from '../../store/giphy/slice';
+import {removeError, removeSearchedResult} from '../../store/giphy/slice';
 import CustomSearchTextInput from '../../components/common/customSearchTextInput';
 
 const Search = () => {
@@ -31,7 +33,9 @@ const Search = () => {
   const searchResult = useSelector(searchedGifSelector);
   const loading = useSelector(searchedGifLoadingSelector);
   const listEndLoading = useSelector(searchedExtraGifLoadingSelector);
+  const error = useSelector(errorSelector);
   const [text, setText] = useState('');
+  const textRef = useRef(null);
 
   // handle text
   const handleTextChange = text => {
@@ -41,6 +45,7 @@ const Search = () => {
   // handle search
   const searchGifs = () => {
     dispatch(getSearchedTrendingGif({q: text}));
+    Keyboard.dismiss();
   };
 
   // handle infinite scroll
@@ -50,7 +55,13 @@ const Search = () => {
 
   // cleanup function
   useEffect(() => {
-    return () => dispatch(removeSearchedResult());
+    if (textRef.current) {
+      textRef.current.focus();
+    }
+    return () => {
+      dispatch(removeSearchedResult());
+      dispatch(removeError());
+    };
   }, []);
 
   // render gif's
@@ -71,6 +82,7 @@ const Search = () => {
   return (
     <View style={styles.container}>
       <CustomSearchTextInput
+        ref={textRef}
         searchGifs={searchGifs}
         value={text}
         handleTextChange={handleTextChange}
@@ -85,6 +97,9 @@ const Search = () => {
           renderItem={renderGifs}
           data={searchResult}
           ListFooterComponent={ListFooterComponent}
+          ListEmptyComponent={() =>
+            error != '' ? <Text style={styles.error}>{error}</Text> : null
+          }
         />
       )}
     </View>

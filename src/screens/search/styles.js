@@ -8,6 +8,12 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   container: {flex: 1},
+  error: {
+    color: Colors.alertAndStatus.error,
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });
 
 export default styles;

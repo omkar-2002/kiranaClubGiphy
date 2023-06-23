@@ -25,7 +25,9 @@ const Trending = () => {
 
   const ListFooterComponent = () =>
     !listEndLoading ? (
-      <Button title="Load more" onPress={loadExtraGifs} />
+      trendingGifs.length != 0 ? (
+        <Button title="Load more" onPress={loadExtraGifs} />
+      ) : null
     ) : (
       <ActivityIndicator size={24} color={Colors.black.default} />
     );
