@@ -1,5 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {getTrendingGif, getExtraTrendingGif} from './thunk';
+import {
+  getTrendingGif,
+  getExtraTrendingGif,
+  getSearchedTrendingGif,
+  getSearchedExtraTrendingGif,
+} from './thunk';
+
 const initialState = {
   trendingGif: [],
   trendingGifLoading: false,
@@ -9,6 +15,7 @@ const initialState = {
   searchedGif: [],
   searchedGifLoading: false,
   searchedGifOffset: 0,
+  searchedExtraGifLoading: false,
 
   error: '',
 };
@@ -16,7 +23,12 @@ const initialState = {
 const giphySlice = createSlice({
   name: 'giphy',
   initialState,
-  reducers: {},
+  reducers: {
+    removeSearchedResult(state) {
+      console.log("Called")
+      state.searchedGif = [];
+    },
+  },
   extraReducers: builder => {
     builder.addCase(getTrendingGif.pending, (state, {payload}) => {
       state.trendingGifLoading = true;
@@ -42,9 +54,40 @@ const giphySlice = createSlice({
         state.error = payload;
         state.trendingExtraGifLoading = false;
       });
+
+    builder.addCase(getSearchedTrendingGif.pending, (state, {payload}) => {
+      state.searchedGifLoading = true;
+    }),
+      builder.addCase(getSearchedTrendingGif.fulfilled, (state, {payload}) => {
+        state.searchedGif = payload;
+        state.searchedGifLoading = false;
+      }),
+      builder.addCase(getSearchedTrendingGif.rejected, (state, {payload}) => {
+        state.error = payload;
+        state.searchedGifLoading = false;
+      });
+
+    builder.addCase(getSearchedExtraTrendingGif.pending, (state, {payload}) => {
+      state.searchedExtraGifLoading = true;
+    }),
+      builder.addCase(
+        getSearchedExtraTrendingGif.fulfilled,
+        (state, {payload}) => {
+          state.searchedGif = state.searchedGif.concat(payload.data);
+          state.searchedGifOffset = payload.offset;
+          state.searchedExtraGifLoading = false;
+        },
+      ),
+      builder.addCase(
+        getSearchedExtraTrendingGif.rejected,
+        (state, {payload}) => {
+          state.error = payload;
+          state.searchedExtraGifLoading = false;
+        },
+      );
   },
 });
 
-export const {} = giphySlice.actions;
+export const {removeSearchedResult} = giphySlice.actions;
 
 export default giphySlice.reducer;

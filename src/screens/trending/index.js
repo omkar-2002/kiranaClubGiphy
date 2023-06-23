@@ -81,9 +81,9 @@ export const TrendingOptions = ({navigation}) => {
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
         <Feather
-          //   onPress={() => {
-          //     navigation.navigate('Search');
-          //   }}
+          onPress={() => {
+            navigation.navigate('Search');
+          }}
           size={24}
           name="search"
           color={Colors.black.default}

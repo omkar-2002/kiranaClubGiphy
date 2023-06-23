@@ -33,9 +33,7 @@ export const getExtraTrendingGif = createAsyncThunk(
         const {
           giphy: {trendingGifOffset},
         } = getState();
-        console.log('Aloy mi');
         const offsetIndex = trendingGifOffset + 10;
-        console.log(offsetIndex);
         const res = await axios.get('https://api.giphy.com/v1/gifs/trending', {
           params: {
             api_key: 'kmVYJiRB2t0A6YxVgLofiCZI5hmTtTML',
@@ -45,7 +43,65 @@ export const getExtraTrendingGif = createAsyncThunk(
         });
         resolve({data: res.data.data, offset: offsetIndex});
       } catch (err) {
-        console.log("err=>",err)
+        reject(err);
+      }
+    });
+  },
+);
+
+export const getSearchedTrendingGif = createAsyncThunk(
+  'api.giphy.com/v1/stickers/search',
+  (payload, {dispatch, getState}) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const {
+          giphy: {trendingGifOffset},
+        } = getState();
+
+        const {q} = payload;
+        const res = await axios.get(
+          'https://api.giphy.com/v1/stickers/search',
+          {
+            params: {
+              api_key: 'kmVYJiRB2t0A6YxVgLofiCZI5hmTtTML',
+              offset: trendingGifOffset,
+              limit: 10,
+              q,
+            },
+          },
+        );
+        resolve(res.data.data);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+);
+
+export const getSearchedExtraTrendingGif = createAsyncThunk(
+  'api.giphy.com/v1/stickers/search/extra',
+  (payload, {dispatch, getState}) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const {
+          giphy: {searchedGifOffset},
+        } = getState();
+        
+        const offsetIndex = searchedGifOffset + 10;
+        const {q} = payload;
+        const res = await axios.get(
+          'https://api.giphy.com/v1/stickers/search',
+          {
+            params: {
+              api_key: 'kmVYJiRB2t0A6YxVgLofiCZI5hmTtTML',
+              offset: offsetIndex,
+              limit: 10,
+              q,
+            },
+          },
+        );
+        resolve({data: res.data.data, offset: offsetIndex});
+      } catch (err) {
         reject(err);
       }
     });
