@@ -6,16 +6,32 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import styles from './styles';
 import Colors from '../../constants/Colors';
 
-const GiphyCard = ({uri, onPressWhatsapp, onPressDownload}) => {
+const GiphyCard = ({uri, onPressWhatsapp, onPressDownload, isDarkTheme}) => {
   return (
-    <View style={styles.giphyCard}>
+    <View
+      style={[
+        styles.giphyCard,
+        {
+          backgroundColor: isDarkTheme
+            ? Colors.black.light
+            : Colors.white.default,
+        },
+      ]}>
       <FastImage style={styles.gif} source={{uri}} />
       <View style={styles.iconView}>
         <TouchableOpacity onPress={onPressDownload} activeOpacity={0.5}>
-          <Feather size={22} name="download" color={Colors.black.default} />
+          <Feather
+            size={22}
+            name="download"
+            color={isDarkTheme ? Colors.white.default : Colors.black.default}
+          />
         </TouchableOpacity>
         <TouchableOpacity onPress={onPressWhatsapp} activeOpacity={0.7}>
-          <Fontisto size={22} name="whatsapp" color={Colors.black.default} />
+          <Fontisto
+            size={22}
+            name="whatsapp"
+            color={isDarkTheme ? Colors.white.default : Colors.black.default}
+          />
         </TouchableOpacity>
       </View>
     </View>

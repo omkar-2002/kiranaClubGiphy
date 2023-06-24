@@ -2,18 +2,27 @@ import {StyleSheet} from 'react-native';
 import Colors from '../../constants/Colors';
 
 export const styles = StyleSheet.create({
-    container:{backgroundColor: Colors.white.default, flex: 1},
-    header:{
-        fontSize: 18,
-        color: Colors.black.default,
-        fontWeight: 'bold',
-        marginHorizontal: 20,
-      },
-      flatlist:{flex: 1},
-      flatListContent:{
-        alignItems: 'center',
-        padding: 20,
-      }
+  container: {backgroundColor: '#121212', flex: 1},
+  header: {
+    fontSize: 18,
+    color: Colors.black.default,
+    fontWeight: 'bold',
+    marginHorizontal: 20,
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  flatlist: {flex: 1},
+  flatListContent: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  switchView: {
+    flexDirection: 'row',
+    marginLeft: 20,
+    marginTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default styles;

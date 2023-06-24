@@ -5,7 +5,7 @@ import Colors from '../../constants/Colors';
 export const styles = StyleSheet.create({
   giphyCard: {
     padding: 10,
-    backgroundColor: Colors.white.default,
+    backgroundColor: "#2a2a2a",
     elevation: 5,
     borderRadius: 7,
     margin: 10,

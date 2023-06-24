@@ -14,8 +14,8 @@ export default {
     errorDark: '#ED4B68',
   },
   black: {
-    default: '#000000',
-    light: '#1D1D1D',
+    default: '#121212',
+    light: '#2a2a2a',
     light1: '#282828',
     dark: '#484848',
     dark1: '#1C1C1F',
