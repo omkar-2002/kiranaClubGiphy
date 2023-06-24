@@ -13,6 +13,10 @@ export const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 10,
     elevation: 5,
+    shadowColor: 'black',
+    shadowOpacity: 0.26,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 10,
     flexBasis: '80%',
     marginLeft: 10,
   },
@@ -26,6 +30,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
+    shadowColor: 'black',
+    shadowOpacity: 0.26,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 10,
   },
 });
 
