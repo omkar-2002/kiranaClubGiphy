@@ -1,6 +1,10 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import Config from 'react-native-config';
 import axios from 'axios';
+import {throttle} from 'lodash';
+
+const THROTTLE_DELAY = 300;
+const THROTTLE_LIMIT = 1;
 
 export const getTrendingGif = createAsyncThunk(
   'api.giphy.com/v1/gifs/trending',
@@ -10,10 +14,10 @@ export const getTrendingGif = createAsyncThunk(
         const {
           giphy: {trendingGifOffset},
         } = getState();
-        const res = await axios.get('https://api.giphy.com/v1/gifs/trending', {
+        const res = await axios.get(Config.GIPHY_TRENDING_API, {
           params: {
             offset: trendingGifOffset,
-            api_key: 'kmVYJiRB2t0A6YxVgLofiCZI5hmTtTML',
+            api_key: Config.API_KEY,
             limit: 10,
           },
         });
@@ -34,9 +38,9 @@ export const getExtraTrendingGif = createAsyncThunk(
           giphy: {trendingGifOffset},
         } = getState();
         const offsetIndex = trendingGifOffset + 10;
-        const res = await axios.get('https://api.giphy.com/v1/gifs/trending', {
+        const res = await axios.get(Config.GIPHY_TRENDING_API, {
           params: {
-            api_key: 'kmVYJiRB2t0A6YxVgLofiCZI5hmTtTML',
+            api_key: Config.API_KEY,
             offset: offsetIndex,
             limit: 10,
           },
@@ -51,31 +55,37 @@ export const getExtraTrendingGif = createAsyncThunk(
 
 export const getSearchedTrendingGif = createAsyncThunk(
   'api.giphy.com/v1/stickers/search',
-  (payload, {dispatch, getState}) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const {
-          giphy: {trendingGifOffset},
-        } = getState();
+  throttle(
+    (payload, {dispatch, getState}) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const {
+            giphy: {trendingGifOffset},
+          } = getState();
 
-        const {q} = payload;
-        const res = await axios.get(
-          'https://api.giphy.com/v1/stickers/search',
-          {
+          const {q} = payload;
+          const res = await axios.get(Config.GIPHY_SEARCH_API, {
             params: {
-              api_key: 'kmVYJiRB2t0A6YxVgLofiCZI5hmTtTML',
+              api_key: Config.API_KEY,
               offset: trendingGifOffset,
               limit: 10,
               q,
             },
-          },
-        );
-        resolve(res.data.data);
-      } catch (err) {
-        reject(err);
-      }
-    });
-  },
+          });
+          resolve(res.data.data);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    },
+    THROTTLE_DELAY,
+    {
+      leading: true,
+      trailing: true,
+      leadingDelay: 0,
+      trailingLimit: THROTTLE_LIMIT,
+    },
+  ),
 );
 
 export const getSearchedExtraTrendingGif = createAsyncThunk(
@@ -86,20 +96,17 @@ export const getSearchedExtraTrendingGif = createAsyncThunk(
         const {
           giphy: {searchedGifOffset},
         } = getState();
-        
+
         const offsetIndex = searchedGifOffset + 10;
         const {q} = payload;
-        const res = await axios.get(
-          'https://api.giphy.com/v1/stickers/search',
-          {
-            params: {
-              api_key: 'kmVYJiRB2t0A6YxVgLofiCZI5hmTtTML',
-              offset: offsetIndex,
-              limit: 10,
-              q,
-            },
+        const res = await axios.get(Config.GIPHY_SEARCH_API, {
+          params: {
+            api_key: Config.API_KEY,
+            offset: offsetIndex,
+            limit: 10,
+            q,
           },
-        );
+        });
         resolve({data: res.data.data, offset: offsetIndex});
       } catch (err) {
         reject(err);

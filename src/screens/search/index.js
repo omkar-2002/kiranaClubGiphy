@@ -10,7 +10,7 @@ import {
 import React, {useEffect, useState, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
-
+import Config from 'react-native-config';
 //Defined components
 import Colors from '../../constants/Colors';
 import {
@@ -41,7 +41,7 @@ const Search = ({navigation}) => {
   const [text, setText] = useState('');
   const [loading, setDownloadLoading] = useState(false);
   const textRef = useRef(null);
-
+  
   // handle text
   const handleTextChange = text => {
     setText(text);
