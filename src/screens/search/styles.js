@@ -14,6 +14,9 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  spinnerTextStyle: {
+    color: Colors.grey.default,
+  },
 });
 
 export default styles;

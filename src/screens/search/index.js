@@ -1,16 +1,17 @@
+// Third party libraries
 import {
-  StyleSheet,
   Text,
   Button,
   View,
-  TextInput,
   FlatList,
   ActivityIndicator,
   Keyboard,
 } from 'react-native';
 import React, {useEffect, useState, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import Feather from 'react-native-vector-icons/Feather';
+import Spinner from 'react-native-loading-spinner-overlay';
+
+//Defined components
 import Colors from '../../constants/Colors';
 import {
   getSearchedExtraTrendingGif,
@@ -22,19 +23,21 @@ import {
   searchedExtraGifLoadingSelector,
   errorSelector,
 } from '../../store/giphy/selector';
-import {TouchableOpacity} from 'react-native';
 import GiphyCard from '../../components/giphyCard';
 import styles from './styles';
 import {removeError, removeSearchedResult} from '../../store/giphy/slice';
 import CustomSearchTextInput from '../../components/common/customSearchTextInput';
+import WhatsappShare from '../../utils/WhatsappShare';
+import DownloadGif from '../../utils/DownloadGif';
 
 const Search = () => {
   const dispatch = useDispatch();
   const searchResult = useSelector(searchedGifSelector);
-  const loading = useSelector(searchedGifLoadingSelector);
+  const searchloading = useSelector(searchedGifLoadingSelector);
   const listEndLoading = useSelector(searchedExtraGifLoadingSelector);
   const error = useSelector(errorSelector);
   const [text, setText] = useState('');
+  const [loading, setDownloadLoading] = useState(false);
   const textRef = useRef(null);
 
   // handle text
@@ -66,7 +69,15 @@ const Search = () => {
 
   // render gif's
   const renderGifs = ({item}) => {
-    return <GiphyCard uri={item?.images?.original?.url} />;
+    return (
+      <GiphyCard
+        onPressWhatsapp={() => WhatsappShare(item?.images?.original?.url)}
+        onPressDownload={() =>
+          DownloadGif(item?.images?.original?.url, e => setDownloadLoading(e))
+        }
+        uri={item?.images?.original?.url}
+      />
+    );
   };
 
   // flatlist footer component
@@ -87,7 +98,7 @@ const Search = () => {
         value={text}
         handleTextChange={handleTextChange}
       />
-      {loading ? (
+      {searchloading ? (
         <ActivityIndicator size={26} color={Colors.black.default} />
       ) : (
         <FlatList
@@ -102,6 +113,11 @@ const Search = () => {
           }
         />
       )}
+      <Spinner
+        visible={loading}
+        textContent={'Loading...'}
+        textStyle={styles.spinnerTextStyle}
+      />
     </View>
   );
 };

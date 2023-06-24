@@ -1,10 +1,13 @@
+// Third party libraries
 import {Text, View, FlatList, ActivityIndicator, Button} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
-
-import CustomHeaderButton from '../../components/common/CustomHeaderButton';
+import Spinner from 'react-native-loading-spinner-overlay';
 import Feather from 'react-native-vector-icons/Feather';
+
+//Defined components
+import CustomHeaderButton from '../../components/common/CustomHeaderButton';
 import Colors from '../../constants/Colors';
 import {getExtraTrendingGif, getTrendingGif} from '../../store/giphy/thunk';
 import {
@@ -13,16 +16,39 @@ import {
 } from '../../store/giphy/selector';
 import GiphyCard from '../../components/giphyCard';
 import styles from './styles';
+import DownloadGif from '../../utils/DownloadGif';
+import WhatsappShare from '../../utils/WhatsappShare';
 
 const Trending = () => {
   const dispatch = useDispatch();
   const trendingGifs = useSelector(trendingGifSelector);
   const listEndLoading = useSelector(trendingExtraGifLoadingSelector);
+  const [loading, setDownloadLoading] = useState(false);
 
+  // handle first render
   useEffect(() => {
     dispatch(getTrendingGif());
   }, []);
 
+  // handle infinite scrolling
+  const loadExtraGifs = () => {
+    dispatch(getExtraTrendingGif());
+  };
+
+  // render gifs
+  const renderGifs = ({item}) => {
+    return (
+      <GiphyCard
+        onPressWhatsapp={() => WhatsappShare(item?.images?.original?.url)}
+        onPressDownload={() =>
+          DownloadGif(item?.images?.original?.url, e => setDownloadLoading(e))
+        }
+        uri={item?.images?.original?.url}
+      />
+    );
+  };
+
+  // render footer
   const ListFooterComponent = () =>
     !listEndLoading ? (
       trendingGifs.length != 0 ? (
@@ -31,14 +57,6 @@ const Trending = () => {
     ) : (
       <ActivityIndicator size={24} color={Colors.black.default} />
     );
-
-  const loadExtraGifs = () => {
-    dispatch(getExtraTrendingGif());
-  };
-
-  const renderGifs = ({item}) => {
-    return <GiphyCard uri={item?.images?.original?.url} />;
-  };
 
   return (
     <View style={styles.container}>
@@ -53,6 +71,11 @@ const Trending = () => {
           <ActivityIndicator size={26} color={Colors.black.default} />
         )}
         ListFooterComponent={ListFooterComponent}
+      />
+      <Spinner
+        visible={loading}
+        textContent={'Loading...'}
+        textStyle={styles.spinnerTextStyle}
       />
     </View>
   );
