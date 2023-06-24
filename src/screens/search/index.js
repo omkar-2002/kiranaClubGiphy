@@ -30,6 +30,7 @@ import {removeError, removeSearchedResult} from '../../store/giphy/slice';
 import CustomSearchTextInput from '../../components/common/customSearchTextInput';
 import WhatsappShare from '../../utils/WhatsappShare';
 import DownloadGif from '../../utils/DownloadGif';
+import {toggleGifPlaying} from '../../store/giphy/slice';
 
 const Search = ({navigation}) => {
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const Search = ({navigation}) => {
   const [text, setText] = useState('');
   const [loading, setDownloadLoading] = useState(false);
   const textRef = useRef(null);
-  
+
   // handle text
   const handleTextChange = text => {
     setText(text);
@@ -51,6 +52,11 @@ const Search = ({navigation}) => {
   const searchGifs = () => {
     dispatch(getSearchedTrendingGif({q: text}));
     Keyboard.dismiss();
+  };
+
+  //play/stop Gifs
+  const onPlayGif = (id, playing) => {
+    dispatch(toggleGifPlaying({id: id, play: !playing, from: 'search'}));
   };
 
   // handle infinite scroll
@@ -73,12 +79,18 @@ const Search = ({navigation}) => {
   const renderGifs = ({item}) => {
     return (
       <GiphyCard
+        isPlaying={item?.isPlaying}
+        onPlay={() => onPlayGif(item.id, item?.isPlaying)}
         isDarkTheme={isDarkTheme}
         onPressWhatsapp={() => WhatsappShare(item?.images?.original?.url)}
         onPressDownload={() =>
           DownloadGif(item?.images?.original?.url, e => setDownloadLoading(e))
         }
-        uri={item?.images?.original?.url}
+        uri={
+          item?.isPlaying
+            ? item?.images?.original?.url
+            : item?.images?.original?.mp4
+        }
       />
     );
   };
@@ -115,7 +127,10 @@ const Search = ({navigation}) => {
         onPressBack={() => navigation.goBack()}
       />
       {searchloading ? (
-        <ActivityIndicator size={26} color={isDarkTheme ? Colors.white.default : Colors.black.default} />
+        <ActivityIndicator
+          size={26}
+          color={isDarkTheme ? Colors.white.default : Colors.black.default}
+        />
       ) : (
         <FlatList
           numColumns={2}

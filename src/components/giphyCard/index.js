@@ -1,12 +1,20 @@
 import {View, TouchableOpacity} from 'react-native';
 import React from 'react';
 import FastImage from 'react-native-fast-image';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import styles from './styles';
 import Colors from '../../constants/Colors';
 
-const GiphyCard = ({uri, onPressWhatsapp, onPressDownload, isDarkTheme}) => {
+const GiphyCard = ({
+  uri,
+  onPressWhatsapp,
+  onPressDownload,
+  isDarkTheme,
+  onPlay,
+  isPlaying,
+}) => {
   return (
     <View
       style={[
@@ -25,6 +33,21 @@ const GiphyCard = ({uri, onPressWhatsapp, onPressDownload, isDarkTheme}) => {
             name="download"
             color={isDarkTheme ? Colors.white.default : Colors.black.default}
           />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onPlay} activeOpacity={0.5}>
+          {isPlaying ? (
+            <AntDesign
+              size={22}
+              name="pausecircle"
+              color={isDarkTheme ? Colors.white.default : Colors.black.default}
+            />
+          ) : (
+            <AntDesign
+              size={22}
+              name="play"
+              color={isDarkTheme ? Colors.white.default : Colors.black.default}
+            />
+          )}
         </TouchableOpacity>
         <TouchableOpacity onPress={onPressWhatsapp} activeOpacity={0.7}>
           <Fontisto

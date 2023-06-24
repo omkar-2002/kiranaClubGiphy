@@ -30,13 +30,31 @@ const giphySlice = createSlice({
     removeError(state) {
       state.error = '';
     },
+    toggleGifPlaying(state, {payload}) {
+      const {id, play, from} = payload;
+      if (from === 'trending') {
+        const index = state.trendingGif.findIndex(item => item.id == id);
+        if (index !== -1) {
+          state.trendingGif[index].isPlaying = play;
+        }
+      }
+      if (from === 'search') {
+        const index = state.searchedGif.findIndex(item => item.id == id);
+        if (index !== -1) {
+          state.searchedGif[index].isPlaying = play;
+        }
+      }
+    },
   },
   extraReducers: builder => {
     builder.addCase(getTrendingGif.pending, (state, {payload}) => {
       state.trendingGifLoading = true;
     }),
       builder.addCase(getTrendingGif.fulfilled, (state, {payload}) => {
-        state.trendingGif = payload;
+        const payload1 = payload.map(item => {
+          return {...item, isPlaying: false};
+        });
+        state.trendingGif = payload1;
         state.trendingGifLoading = false;
       }),
       builder.addCase(getTrendingGif.rejected, (state, {payload}) => {
@@ -48,7 +66,10 @@ const giphySlice = createSlice({
       state.trendingExtraGifLoading = true;
     }),
       builder.addCase(getExtraTrendingGif.fulfilled, (state, {payload}) => {
-        state.trendingGif = state.trendingGif.concat(payload.data);
+        const payload1 = payload.data.map(item => {
+          return {...item, isPlaying: false};
+        });
+        state.trendingGif = state.trendingGif.concat(payload1);
         state.trendingGifOffset = payload.offset;
         state.trendingExtraGifLoading = false;
       }),
@@ -64,7 +85,10 @@ const giphySlice = createSlice({
         if (payload.length == 0) {
           state.error = 'No gifs for following keyword';
         }
-        state.searchedGif = payload;
+        const payload1 = payload.map(item => {
+          return {...item, isPlaying: false};
+        });
+        state.searchedGif = payload1;
         state.searchedGifLoading = false;
       }),
       builder.addCase(getSearchedTrendingGif.rejected, (state, {payload}) => {
@@ -78,7 +102,10 @@ const giphySlice = createSlice({
       builder.addCase(
         getSearchedExtraTrendingGif.fulfilled,
         (state, {payload}) => {
-          state.searchedGif = state.searchedGif.concat(payload.data);
+          const payload1 = payload.data.map(item => {
+            return {...item, isPlaying: false};
+          });
+          state.searchedGif = state.searchedGif.concat(payload1);
           state.searchedGifOffset = payload.offset;
           state.searchedExtraGifLoading = false;
         },
@@ -93,6 +120,7 @@ const giphySlice = createSlice({
   },
 });
 
-export const {removeSearchedResult,removeError} = giphySlice.actions;
+export const {removeSearchedResult, removeError, toggleGifPlaying} =
+  giphySlice.actions;
 
 export default giphySlice.reducer;

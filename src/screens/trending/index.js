@@ -27,6 +27,7 @@ import styles from './styles';
 import DownloadGif from '../../utils/DownloadGif';
 import WhatsappShare from '../../utils/WhatsappShare';
 import {setTheme} from '../../store/theme/slice';
+import {toggleGifPlaying} from '../../store/giphy/slice';
 
 const Trending = () => {
   const dispatch = useDispatch();
@@ -45,16 +46,27 @@ const Trending = () => {
     dispatch(getExtraTrendingGif());
   };
 
+  //play/stop Gifs
+  const onPlayGif = (id, playing) => {
+    dispatch(toggleGifPlaying({id: id, play: !playing, from: 'trending'}));
+  };
+
   // render gifs
   const renderGifs = ({item}) => {
     return (
       <GiphyCard
+        isPlaying={item?.isPlaying}
+        onPlay={() => onPlayGif(item.id, item?.isPlaying)}
         isDarkTheme={isDarkTheme}
         onPressWhatsapp={() => WhatsappShare(item?.images?.original?.url)}
         onPressDownload={() =>
           DownloadGif(item?.images?.original?.url, e => setDownloadLoading(e))
         }
-        uri={item?.images?.original?.url}
+        uri={
+          item?.isPlaying
+            ? item?.images?.original?.url
+            : item?.images?.original?.mp4
+        }
       />
     );
   };
