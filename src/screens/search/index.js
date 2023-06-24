@@ -30,7 +30,7 @@ import CustomSearchTextInput from '../../components/common/customSearchTextInput
 import WhatsappShare from '../../utils/WhatsappShare';
 import DownloadGif from '../../utils/DownloadGif';
 
-const Search = () => {
+const Search = ({navigation}) => {
   const dispatch = useDispatch();
   const searchResult = useSelector(searchedGifSelector);
   const searchloading = useSelector(searchedGifLoadingSelector);
@@ -97,6 +97,7 @@ const Search = () => {
         searchGifs={searchGifs}
         value={text}
         handleTextChange={handleTextChange}
+        onPressBack={() => navigation.goBack()}
       />
       {searchloading ? (
         <ActivityIndicator size={26} color={Colors.black.default} />
